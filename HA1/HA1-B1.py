@@ -1,43 +1,40 @@
-# Implement the Luhn algorithm in your favorite language. 
-# You will be given a list of card numbers with one digit censored with an “X”. 
-# Use your implementation to find the censored digit in order for the card number to be valid. 
-# You will be given a list of card numbers, one per line. 
-# The answer is the concatenation of all censored digits, in order according to the list.
-
-
-# Läser en fil med alla kortnummer
+# Luhn algorithm in Python
+# Amanda Flote & Olivia Mattsson
 
 
 def main():
-    # Läser in ett kortnummer
+    # Reads the file
     with open('HA1/testin.txt') as f:
         numbers = ''
         lines = f.read().splitlines()
         for line in lines:
             cardNo = line
-            # Gör om till array
+            # Converts to an array
             cardArray = list(cardNo)
-            doubleArray = double(cardArray)
+            # Retrieves the int values 
+            intArray = double(cardArray)
 
-            numbers = numbers + str(summarize(doubleArray))
+            # Adds the result to the answer string
+            numbers = numbers + str(summarize(intArray))
+
         print(numbers)
 
 
 
-def summarize(doubleArray):
-
-    # Gå över varje element och kollar om värdet är över 10:
+def summarize(intArray):
     val = 0
     xVal = 1
-    for i in range(len(doubleArray)):
-        if isinstance(doubleArray[i], str):
-            if doubleArray[i].__eq__('2X'):
+    # Iterate over every value to add it to val:
+    for i in range(len(intArray)):
+        if isinstance(intArray[i], str):
+            if intArray[i].__eq__('2X'):
                 xVal = 2
-        elif doubleArray[i] >= 10:
-            val = val + (doubleArray[i] - 9)
+        elif intArray[i] >= 10:
+            val = val + (intArray[i] - 9)
         else:
-            val = val + doubleArray[i]
+            val = val + intArray[i]
     
+    # Computes the value for X
     rest = int((val*9) % 10)
     res = rest / xVal
 
@@ -45,15 +42,15 @@ def summarize(doubleArray):
 
 
 def double(cardArray):
-    print(cardArray)
-    # Dubblerar varannan
+    
+    # Doubles every other value, counting from the rightmost.
     for i in range(len(cardArray)-2, -1, -2):
         if (cardArray[i].__eq__('X')):
             cardArray[i] = '2X'
         else:
             cardArray[i] = int(cardArray[i]) + int(cardArray[i])
 
-    #Formattera om arrayen till ints
+    # Formats the other values, except X, to ints as well
     for i in range(len(cardArray)-1, 0, -2):
         if (cardArray[i].__eq__('X')):
             cardArray[i] = 'X'
