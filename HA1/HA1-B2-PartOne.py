@@ -14,42 +14,39 @@ import binascii
 def main():
     with open('HA1/SPVnode.txt') as f:
         lines = f.read().splitlines()
+        # Retrieves our start value - first hash with first leaf
         firstValue = lines[0] + lines[1][1:]
-        print(firstValue)
+        # Converts to byte array
         firstValue= hexa_to_byte(firstValue)
-        print(firstValue)
+        # Hashes the value
         firstValue = sha_hash(firstValue)
-        print(firstValue)
-        appendSHA(firstValue, lines[2:])
+        # Appends the rest of the leaves
+        print(appendSHA(firstValue, lines[2:]))
 
 
 def appendSHA(startValue, lines):
     lastValue = startValue
     for line in lines: 
+        # Depending on if the node is left or right, append the lastValue on the correct side
         if (line[0:1]== 'L'):
             line = line[1:] + lastValue
         else:
             line = lastValue + line[1:]
+        # Converts to correct format and hashes the string
         line = hexa_to_byte(line)
         line = sha_hash(line)
+        # Puts the computed value in our lastValue to continue the loop
         lastValue= line
-    print(lastValue)
     return lastValue
 
 #Hexdec string to byte array
 def hexa_to_byte(inputVal):
-    val = bytearray.fromhex(inputVal)
-    
-    print("modified hexadec: " + inputVal)
-    #val = binascii.unhexlify(inputVal)
-    print("Hexa to byte array: " + str(val))
-    return val
+    return bytearray.fromhex(inputVal)
 
 
 # Byte array to hash
 def sha_hash(inputVal):
     h = hashlib.sha1(inputVal).hexdigest()
-    print("Sha hash: " + h)
     return h
     
 

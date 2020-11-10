@@ -35,8 +35,14 @@ def summarize(intArray):
             val = val + intArray[i]
     
     # Computes the value for X
-    rest = int((val*9) % 10)
-    res = rest / xVal
+    res = int((val*9) % 10)
+    
+    # If we have 2X:
+    if xVal == 2:
+        # If there's an uneven number, we need to add 9 again to get the two numbers combined
+        if res%2 != 0:
+            res = (res + 9)
+        res = int(res/2)
 
     return int(res)
 

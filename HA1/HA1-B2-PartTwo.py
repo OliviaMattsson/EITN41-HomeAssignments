@@ -12,17 +12,23 @@
 import array
 import hashlib
 import binascii
+import math
 
 
 
 def main():
     with open('HA1/FullNode.txt') as f:
         lines = f.read().splitlines()
+
+        # Retrieves the indexes i, j, and the leaves
         i = lines[0]
         j = lines[1]
         leaves = lines[2:]
         print(i, j, leaves)
         
+        createtree(leaves)
+
+        """
         test = hexa_to_byte("")
         sha1 = hexa_to_byte(sha_hash(test))
         sha2 = hexa_to_byte(sha_hash(test))
@@ -35,7 +41,13 @@ def main():
         level1 =sha_hash(level2l +level2r)
 
         print(level1)
+        """
     return
+
+def createtree(leaves):
+    depth = math.ceil(math.log2(len(leaves)))
+    print(depth)
+
 
 #Hexdec string to byte array
 def hexa_to_byte(inputVal):
