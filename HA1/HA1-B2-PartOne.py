@@ -13,13 +13,45 @@ import binascii
 
 def main():
     with open('HA1/SPVnode.txt') as f:
-        hashvalue = ''
         lines = f.read().splitlines()
+        firstValue = lines[0] + lines[1][1:]
+        print(firstValue)
+        firstValue= hexa_to_byte(firstValue)
+        print(firstValue)
+        firstValue = sha_hash(firstValue)
+        print(firstValue)
+        appendSHA(firstValue, lines[2:])
 
 
+def appendSHA(startValue, lines):
+    lastValue = startValue
+    for line in lines: 
+        if (line[0:1]== 'L'):
+            line = line[1:] + lastValue
+        else:
+            line = lastValue + line[1:]
+        line = hexa_to_byte(line)
+        line = sha_hash(line)
+        lastValue= line
+    print(lastValue)
+    return lastValue
+
+#Hexdec string to byte array
+def hexa_to_byte(inputVal):
+    val = bytearray.fromhex(inputVal)
+    
+    print("modified hexadec: " + inputVal)
+    #val = binascii.unhexlify(inputVal)
+    print("Hexa to byte array: " + str(val))
+    return val
 
 
-
+# Byte array to hash
+def sha_hash(inputVal):
+    h = hashlib.sha1(inputVal).hexdigest()
+    print("Sha hash: " + h)
+    return h
+    
 
 
 

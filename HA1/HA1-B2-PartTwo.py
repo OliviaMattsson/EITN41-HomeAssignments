@@ -16,8 +16,43 @@ import binascii
 
 
 def main():
+    with open('HA1/FullNode.txt') as f:
+        lines = f.read().splitlines()
+        i = lines[0]
+        j = lines[1]
+        leaves = lines[2:]
+        print(i, j, leaves)
+        
+        test = hexa_to_byte("")
+        sha1 = hexa_to_byte(sha_hash(test))
+        sha2 = hexa_to_byte(sha_hash(test))
+        sha3 = hexa_to_byte(sha_hash(test))
+        sha4 = hexa_to_byte(sha_hash(test))
+        
+        level2l = hexa_to_byte(sha_hash(sha1 + sha2))
+        level2r = hexa_to_byte(sha_hash(sha3 + sha4))
+
+        level1 =sha_hash(level2l +level2r)
+
+        print(level1)
     return
 
+#Hexdec string to byte array
+def hexa_to_byte(inputVal):
+    val = bytearray.fromhex(inputVal)
+    
+    print("modified hexadec: " + inputVal)
+    #val = binascii.unhexlify(inputVal)
+    print("Hexa to byte array: " + str(val))
+    return val
+
+
+# Byte array to hash
+def sha_hash(inputVal):
+    h = hashlib.sha1(inputVal).hexdigest()
+    print("Sha hash: " + h)
+    return h
+    
 
 
 
