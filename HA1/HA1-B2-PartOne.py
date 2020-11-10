@@ -12,7 +12,9 @@ import binascii
 
 
 def main():
-    return
+    with open('HA1/SPVnode.txt') as f:
+        hashvalue = ''
+        lines = f.read().splitlines()
 
 
 
