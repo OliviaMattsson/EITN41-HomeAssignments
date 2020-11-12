@@ -12,7 +12,7 @@ import binascii
 
 
 def main():
-    with open('HA1/SPVnode.txt') as f:
+    with open('SPVnode.txt') as f:
         lines = f.read().splitlines()
         # Retrieves our start value - first hash with first leaf
         firstValue = lines[0] + lines[1][1:]
@@ -48,10 +48,6 @@ def hexa_to_byte(inputVal):
 def sha_hash(inputVal):
     h = hashlib.sha1(inputVal).hexdigest()
     return h
-    
-
-
-
 
 if __name__ == '__main__':
     main()

@@ -17,61 +17,52 @@ import math
 
 
 def main():
-    with open('HA1/FullNode.txt') as f:
+    with open('leaves5.txt') as f:
         lines = f.read().splitlines()
 
         # Retrieves the indexes i, j, and the leaves
-        i = lines[0]
-        j = lines[1]
+        i = int(lines[0])
+        j = int(lines[1])
         leaves = lines[2:]
-        print(i, j, leaves)
-        
-        createtree(leaves)
-
-        """
-        test = hexa_to_byte("")
-        sha1 = hexa_to_byte(sha_hash(test))
-        sha2 = hexa_to_byte(sha_hash(test))
-        sha3 = hexa_to_byte(sha_hash(test))
-        sha4 = hexa_to_byte(sha_hash(test))
-        
-        level2l = hexa_to_byte(sha_hash(sha1 + sha2))
-        level2r = hexa_to_byte(sha_hash(sha3 + sha4))
-
-        level1 =sha_hash(level2l +level2r)
-
-        print(level1)
-        """
+        path = []
+        (root, pathList) = createtree(leaves, i, path)
+        print(pathList[-j] + root[0])
     return
 
-def createtree(leaves):
-    depth = math.ceil(math.log2(len(leaves)))
-    print(depth)
-
+def createtree(leaves, i, path):
+    newPath = path
+    nextiVal = i
+    nextlevel = []
+    if len(leaves) % 2 != 0:
+        leaves += leaves[-1:]
+    for x in range(0, len(leaves), 2):
+        newNode = leaves[x] + leaves[x+1]
+        newNode = sha_hash(hexa_to_byte(newNode))
+        nextlevel.append(newNode)
+        if x == i:
+            # The new path node is on the right
+            newPath.append("R" + str(leaves[x+1]))
+            nextiVal = len(nextlevel)-1
+        elif (x+1) == i:
+            # The new path node is on the left
+            newPath.append("L" + str(leaves[x]))
+            nextiVal = len(nextlevel)-1
+        
+        
+    if len(nextlevel) == 1:
+        print(newPath)
+        return nextlevel, newPath
+    else:    
+        return createtree(nextlevel, nextiVal, newPath)
 
 #Hexdec string to byte array
 def hexa_to_byte(inputVal):
-    val = bytearray.fromhex(inputVal)
-    
-    print("modified hexadec: " + inputVal)
-    #val = binascii.unhexlify(inputVal)
-    print("Hexa to byte array: " + str(val))
-    return val
-
+    return bytearray.fromhex(inputVal)
 
 # Byte array to hash
 def sha_hash(inputVal):
     h = hashlib.sha1(inputVal).hexdigest()
-    print("Sha hash: " + h)
     return h
-    
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     main()

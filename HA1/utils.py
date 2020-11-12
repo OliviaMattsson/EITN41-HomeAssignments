@@ -1,1 +1,0 @@
-# Util functions for HA1.

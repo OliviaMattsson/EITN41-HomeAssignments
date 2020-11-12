@@ -4,7 +4,7 @@
 
 def main():
     # Reads the file
-    with open('HA1/testin.txt') as f:
+    with open('quizLuhn.txt') as f:
         numbers = ''
         lines = f.read().splitlines()
         for line in lines:
