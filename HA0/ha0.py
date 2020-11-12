@@ -8,7 +8,7 @@ import hashlib
 import binascii
 
 def main():
-
+    
     value = str(input("Enter the value:"))
     print("Converting " + value + ":")
     
