@@ -32,7 +32,31 @@ Some facts that come out of this:
 * The client does not know the location (IP address) of the HS, but knows the location of RP
 * Same goes for the HS
 * RP does not know the location of either one, and neither the contect of the message or what service it is serving.
-* There are 2 or more nodes between HS and RP as well as RP and the Client to hide traffic and create a degree of anonymity.
+* There are 3 nodes between HS and RP and 2 between the RP and the Client to hide traffic and create a degree of anonymity. (Fixed numbers for the experiments, can be more I guess?)
 * Any member of the network which claims to offer stability can be used by HS to form an anonymous tunnel to RP, including the Client if it is a node in the anonymization network. This is the basis of the attacks presented below!
 
 ## Attacks and Experimental Results
+![](https://i.gyazo.com/e15da7a7837d28cce219e837049eea44.png)
+The attacks are all used to determine the IP address of the HS. There are four attack methods, and all of these can be carried out by an adversary as long as it controls at least one node in the network. Anyone can volunteer to be a Tor node, so it is trivial. 
+
+To describe the general case:
+An attacker controls the Client and one node in the network. As you can see in the picture, the attacker wants to control the first node in the communication channel from the HS to the RP. Among the circuits created by her controlled node, the attacker can analyze the traffic pattern when she sends to and receives from the HS. If she finds a match, then her node is part of the circuit to the HS. Since she controls the Client, she knows the IP address of the RS. If both of the IP addresses used in the controlled node when the messages are forwarded are unknown to the attacker, then she knows that it is either node 1 or node 2. If there is an known address, the IP of the RP, she knows that it is node 3. By continuously abandon the circuit and perform the attack again, the attacker can sample information about the different addresses. When she has enough information, the attacker can know when she is connected as node 1 and thereby know the IP address of the HS. 
+
+### Experimental setup
+Not really important for the quizes, I think. This part just describes the setup of the experiment
+
+### Timing analysis
+The attacker uses the logged timing data and direction from the generated data set and the sampled data set from the circuits created in that period of time to find two things:
+* Confirm that the attacker's node is part of a circuit
+* If it is true, determine which position it is located in (Node 1, 2, or 3)
+
+The sampled data set, the generated set by the Client, and the sampled data done by the server are all compared to each other to identify the generated data set. The match confirmation is an extended version of the packet counting attack described by Serjantov and Sewell (No clue what it is). 
+
+I didn't quite understand the technical parts here. Something about comparing the data packets depending on when they were sent and received from the different data sets. 
+
+### Service Location Attack
+There are two different scenarios for the HS:
+1: *Server Scenario* - When the hidden service is located on a node within the anonymous network. Ofter used to hide service traffic within all the other trafic happening in the network. 
+2: *Client Scenario* - When the hidden service is located on a Client node using but not participating in a network. Often used when it is desired that the HS should not be listed in the Directory Service as a participating node of the network. 
+
+When using the Server Scenario, it is possible to correlate information about the availability of the service and the availability of the nodes listed in the DS. An attacker could poll each listed server every five minutes and correlate the lists of available active servers. 
