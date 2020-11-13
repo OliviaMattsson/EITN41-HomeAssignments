@@ -1,19 +1,118 @@
-# PART ONE
-# Implement the Luhn algorithm in your favorite language. 
-# You will be given a list of card numbers with one digit censored with an “X”. 
-# Use your implementation to find the censored digit in order for the card number to be valid. 
-# You will be given a list of card numbers, one per line. 
-# The answer is the concatenation of all censored digits, in order according to the list.
-# The program should output the Merkle root as a hexadecimal string. 
-# Use SHA-1 as hash function throughout the tree and merge nodes using concatenation of SHA-1 results (byte arrays).
+# PART ONE - SPV NODE
+# By Olivia Mattsson and Amanda Flote
 
-# PART TWO
-# Implement a program that takes an integer index i, another integer index j, and a set of leaves, 
-# (l(0), l(1), l(2), . . . , l(n − 1)), in a Merkle tree. 
-# The leaves are given as hexadecimal strings as input, but should be interpreted as byte arrays. 
-# The input is summarized in a file, starting with the integer index i, the integer index j, 
-# and then followed by the leaves, one input on each line. Your program should provide:
+import hashlib
 
-# 1. The Merkle path for leaf l(i), starting with the sibling of l(i).
-# 2. The Merkle path node at a given depth j (this will be used in the assessment). 
-# 3. The resulting Merkle root (this will be used in the assessment).
+
+
+def main():
+    with open('HA1/SPVnode.txt') as f:
+        lines = f.read().splitlines()
+        # Retrieves our start value - first hash with first leaf
+        firstValue = lines[0] + lines[1][1:]
+        # Converts to byte array
+        firstValue= hexa_to_byte(firstValue)
+        # Hashes the value
+        firstValue = sha_hash(firstValue)
+        # Appends the rest of the leaves
+        print(appendSHA(firstValue, lines[2:]))
+
+
+def appendSHA(startValue, lines):
+    lastValue = startValue
+    for line in lines: 
+        # Depending on if the node is left or right, append the lastValue on the correct side
+        if (line[0:1]== 'L'):
+            line = line[1:] + lastValue
+        else:
+            line = lastValue + line[1:]
+        # Converts to correct format and hashes the string
+        line = hexa_to_byte(line)
+        line = sha_hash(line)
+        # Puts the computed value in our lastValue to continue the loop
+        lastValue= line
+    return lastValue
+
+#Hexdec string to byte array
+def hexa_to_byte(inputVal):
+    return bytearray.fromhex(inputVal)
+
+
+# Byte array to hash
+def sha_hash(inputVal):
+    h = hashlib.sha1(inputVal).hexdigest()
+    return h
+
+if __name__ == '__main__':
+    main()
+
+# PART TWO - Full Node
+# By Olivia Mattsson and Amanda Flote
+
+import hashlib
+
+
+
+def main():
+    with open('HA1/leaves9.txt') as f:
+        lines = f.read().splitlines()
+
+        # Retrieves the indexes i, j, and the leaves
+        i = int(lines[0])
+        j = int(lines[1])
+        leaves = lines[2:]
+        path = []
+        # Retrieves the root and the list of path nodes from createtree()
+        (root, pathList) = createtree(leaves, i, path)
+        print(pathList[-j] + root[0])
+    return
+
+def createtree(leaves, i, path):
+    # Copies the list of nodes hashed with in the path and the value of i to look for
+    newPath = path
+    nextiVal = i
+    # Creates a new list for the current level we are at
+    nextlevel = []
+    # If there is an uneven amount of nodes, we add the last node to the list
+    if len(leaves) % 2 != 0:
+        leaves += leaves[-1:]
+    # Iterates over the nodes on the current level
+    for x in range(0, len(leaves), 2):
+        # Creates a new node, hash it and add to the new level
+        newNode = leaves[x] + leaves[x+1]
+        newNode = sha_hash(hexa_to_byte(newNode))
+        nextlevel.append(newNode)
+
+        # Two methods if our i value was found - adds the neighbour to the list of path nodes
+        if x == i:
+            # The new path node is on the right
+            newPath.append("R" + str(leaves[x+1]))
+            # The new i value to look for in the next loop
+            nextiVal = len(nextlevel)-1
+        elif (x+1) == i:
+            # The new path node is on the left
+            newPath.append("L" + str(leaves[x]))
+            # The new i value to look for in the next loop
+            nextiVal = len(nextlevel)-1
+        
+    # If we are in the top root, we stop the function calls and return the list
+    # of paths and the root level node
+    if len(nextlevel) == 1:
+        return nextlevel, newPath
+    # If we are not on the root level, we call the function again    
+    else:    
+        return createtree(nextlevel, nextiVal, newPath)
+
+#Hexdec string to byte array
+def hexa_to_byte(inputVal):
+    return bytearray.fromhex(inputVal)
+
+# Byte array to hash
+def sha_hash(inputVal):
+    h = hashlib.sha1(inputVal).hexdigest()
+    return h
+
+if __name__ == '__main__':
+    main()
+
+
