@@ -17,7 +17,7 @@ import math
 
 
 def main():
-    with open('leaves5.txt') as f:
+    with open('leaves.txt') as f:
         lines = f.read().splitlines()
 
         # Retrieves the indexes i, j, and the leaves
@@ -26,6 +26,7 @@ def main():
         leaves = lines[2:]
         path = []
         (root, pathList) = createtree(leaves, i, path)
+        print(len(pathList))
         print(pathList[-j] + root[0])
     return
 
