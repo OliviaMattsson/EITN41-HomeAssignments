@@ -4,7 +4,7 @@
 
 def main():
     # Reads the file
-    with open('quizLuhn.txt') as f:
+    with open('HA1/quizLuhn.txt') as f:
         numbers = ''
         lines = f.read().splitlines()
         for line in lines:
@@ -13,7 +13,6 @@ def main():
             cardArray = list(cardNo)
             # Retrieves the int values 
             intArray = double(cardArray)
-
             # Adds the result to the answer string
             numbers = numbers + str(summarize(intArray))
 
