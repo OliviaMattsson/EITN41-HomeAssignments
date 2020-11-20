@@ -4,7 +4,7 @@
 def main():
     # Read a file with the content: 
     # SA, BA, DA, DB, M, b
-    with open('HA2/testquiz.txt') as f:
+    with open('HA2/testquizB1.txt') as f:
         lines = f.read().splitlines()
         secrets, data, message, b = getInfo(lines)
         # Compute the broadcasted data, which is SA XOR SB:
