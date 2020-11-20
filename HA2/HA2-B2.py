@@ -4,7 +4,7 @@
 from pcapfile import savefile
 
 def main():
-    testcap = open('HA2/test.pcap', 'rb')
+    testcap = open('HA2/cia.log.1337.pcap', 'rb')
     capfile = savefile.load_savefile(testcap, layers=2, verbose=True)
 
     # print the packets

@@ -9,7 +9,8 @@ def main():
         secrets, data, message, b = getInfo(lines)
         # Compute the broadcasted data, which is SA XOR SB:
         XORdata = hex(int(str(secrets[0]), 16) ^ int(str(secrets[1]), 16))
-
+        
+        xormessage = ""
         # If we want to broadcast our message, we XOR the secrets with our message:
         if b==1:
             XORdata = hex(int(XORdata,16) ^ int(str(message), 16))
@@ -25,7 +26,9 @@ def main():
         
         # Clean up the broadcasted data
         XORdata = stripContent(XORdata)
-        xormessage = stripContent(xormessage)
+        if (xormessage != ""):
+            xormessage = stripContent(xormessage)
+        
         print(XORdata + xormessage)
         return
 
