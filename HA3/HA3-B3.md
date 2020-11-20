@@ -15,6 +15,6 @@ Read about the property notions malleability, homomorphic encryption, IND-CPA, I
 
 
 2. Show that El-Gamal is malleable.
-    In the ElGamal cryptosystem, a plaintext m is encrypted as E(m)=(g^{b}, m * A^{b}), where (g,A) is the public key. Given such a ciphertext (c_1,c_2), an adversary can compute (c_1, t * c_2), which is a valid encryption of tm, for any t. In ElGamal (and in RSA), one can combine encryptions of m_1 and m_2 to obtain a valid encryption of their product m<sub>1</sub> * m<sub>2</sub>.
+    In the ElGamal cryptosystem, a plaintext m is encrypted as E(m)=(g<sup>b</sup>}, m * A<sup>b</sup>), where (g,A) is the public key. Given such a ciphertext (c<sub>1</sub>,c<sub>2</sub>), an adversary can compute (c<sub>1</sub>, t * c<sub>2</sub>), which is a valid encryption of tm, for any t. In ElGamal (and in RSA), one can combine encryptions of m<sub>1</sub> and m<sub>2</sub> to obtain a valid encryption of their product m<sub>1</sub> * m<sub>2</sub>.
 
 3. Show that El-Gamal is not IND-CCA2.
