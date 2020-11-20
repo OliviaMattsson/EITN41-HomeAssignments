@@ -1,6 +1,6 @@
 # Mix Network
 # By Amanda Flote & Olivia Mattsson
-#!/usr/bin/env python
+# !/usr/bin/env python
 from pcapfile import savefile
 
 def main():
