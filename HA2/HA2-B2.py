@@ -5,9 +5,9 @@ from pcapfile import savefile
 
 def main():
     # Opens pcapfile and txt file with input
-    testcap = open('HA2/cia.log.1339.pcap', 'rb')
+    testcap = open('HA2/cia.log.5.pcap', 'rb')
     capfile = savefile.load_savefile(testcap, layers=2, verbose=True)
-    with open('HA2/testquizB2-12.txt') as f:
+    with open('HA2/quizB2.txt') as f:
         lines = f.read().splitlines()
 
         # The learning phase begins here: 
@@ -35,8 +35,7 @@ def main():
             # Adds the destination to the batch
             elif foundMix:
                 newreceivers.add(ip_dst)
-            
-        # Find the disjunct pair of the receiver batches:
+        # Find the disjunct pairs of the receiver batches:
         disjunct = disReceivers(receivers , NoParners)
         # Finds the partners through the exlusion phase:
         partners = exclude(disjunct, receivers)
@@ -75,6 +74,7 @@ def exclude(dis, receivers):
         for indexDis in range(len(dis)):
             # If the receiver is not disjoint, that means we found a match:
             if not receiver.isdisjoint(dis[indexDis]):
+                # If we find a matching IP in the receiver set:
                 if foundIP == -1:
                     foundIP = indexDis
                 # If we already found IP, we set sameIP to true:
@@ -108,7 +108,7 @@ def sumIP(partners):
             # Converts the ints to hexa and saves them in a string:
             for i in range(len(split)):
                 split[i] = int_to_hexa(int(split[i]))
-                while len(split[i]) != 2:
+                while len(split[i]) < 2:
                     split[i] = '0' + split[i]
             hexstring = ''.join(split)
             ipSum += hexa_to_int(hexstring)
