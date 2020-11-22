@@ -1,0 +1,8 @@
+reutnr empty list in expressions. 
+ty() an localtypeequations
+ty() will return int and localtypeq the empty list
+
+Don't solve with attributes
+
+Fix buildt in types - array [aplha]
+Fix in TypeAnalysis - 
