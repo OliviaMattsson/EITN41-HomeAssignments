@@ -15,7 +15,7 @@
 
 1. **Argue that El-Gamal is IND-CPA. You do not have to give a formal proof, but you should clearly argue for it (using the mathematical expressions defining El Gamal):** 
 Let's say an adversary Alice wants to challenge Bob: 
-- Bob generates his key pairs, k<sub>priv</sub> = x and k<sub>pub</sub> = (g, A), where A = g<sup>x</sup>. He sends his public key as well as the other key information to Alice. 
+- Bob generates her his pairs, k<sub>priv</sub> = x and k<sub>pub</sub> = (g, A), where A = g<sup>x</sup>. He sends his public key as well as the other key information to Alice. 
 - Alice computes and sends two chosen plaintexts m<sub>0</sub> and m<sub>1</sub> to Bob. 
 - Bob chooses b = {0, 1} at random, and sends a challenge ciphertext to Alice C = E(key<sub>pub</sub>, m<sub>b</sub>) to Alice.
 - Alice is free to perform computations to try to gain information about which message it is. At last, it should compute an outbit if b is 0 or 1. 
@@ -43,3 +43,11 @@ Step-by-step:
  m = t * m
 
 3. **Show that El-Gamal is not IND-CCA2:** 
+Let's say an adversary Alice wants to challenge Bob: 
+- Bob generates her his pairs, k<sub>priv</sub> = x and k<sub>pub</sub> = (g, A), where A = g<sup>x</sup>. He sends his public key as well as the other key information to Alice. 
+- Alice computes and sends two chosen plaintexts m<sub>0</sub> and m<sub>1</sub> to Bob. 
+- Bob chooses b = {0, 1} at random, and sends a challenge ciphertext to Alice C = E(key<sub>pub</sub>, m<sub>b</sub>) to Alice.
+- Alice is now able to send ciphertexts to a decryption oracle, which will decrypt any ciphertext except the challenge that was sent to Alice from Bob. This allows her to find out whether m<sub>0</sub> or m<sub>1</sub> was sent due to:
+    - Alice can compute a new ciphertext with a new message: c<sub>new</sub> =(g<sup>k</sup>, A<sup>k</sup> * m<sub>b</sub> * m<sub>0</sub><sup>-1</sup> * m<sub>new</sub>)
+    - She does this for both m<sub>0</sub> and m<sub>1</sub>, which one of them will compute c<sub>new</sub> =(g<sup>k</sup>, A<sup>k</sup> * m<sub>new</sub>)
+    - She can send this to the decrypting oracle to confirm that it will decrypt to her new message. Hence, ElGamal is not IND-CCA2.
