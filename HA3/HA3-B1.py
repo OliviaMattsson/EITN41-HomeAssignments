@@ -1,74 +1,118 @@
 import hashlib
-import random
-import time
-import matplotlib.pyplot as plt
- 
-# INTE VÅR! 
+import matplotlib.pyplot
+from random import randint
 
-def commit(v, k, X):
-    m = hashlib.sha1()
-    message = bin(v)[2:] + bin(k)[2:]
-    m.update(message.encode('UTF-8'))
-    commitHash = bin(int(m.hexdigest(), 16))
-    return commitHash[2:X + 2]
+x_values = []
+y_values = []
+y_conceal_values = []
 
-def breakBinding(collision, v, X):
-    q = 0 if v == 1 else 1
-    for i in range(2 ** 15, 2 ** 16):
-        if collision == commit(q, i, X):
-            return 1
-    return 0
+# Generates a commit according to the commitment scheme.
+# Returns a bit version of a hashed string.
 
-def breakConcealing(collision, X):
-    falseHit = 0
-    trueHit = 0
-    for i in range(2 ** 15, 2 ** 16):
-        if commit(0, i, X) == collision:
-            falseHit += 1
-        if commit(1, i, X) == collision:
-            trueHit += 1
-    
-    if falseHit > trueHit:
-        return 0
-    elif trueHit > falseHit:
-        return 1
-    else:
-        return random.randint(0,1)
 
-X = 35
-iterations = 100
-bindArray = []
-concealArray = []
-for x in range(X):
-    bindSuccess = 0
-    concealSuccess = 0
-    for i in range(iterations):
-        k = random.randint(2 ** 15, (2 ** 16) - 1)
-        commitment = commit(1, k, x)
-        bindSuccess += breakBinding(commitment, 1, x)
-        concealSuccess += breakConcealing(commitment, x)
+def create_commit(v, k):
+    m = str(bin(v)[2:] + bin(k)[2:])
+    hash_object = hashlib.sha1(m.encode())
+    hash_value = hash_object.hexdigest()
+    return bin(int(hash_value, 16))
 
-        if i % 10 == 0 and i != 0:
-            print(i, " iterations out of ", iterations, " done")
+# Generates a list of all possible k values to break binding.
 
-    print("For X =", x, "the probability of..")
-    if bindSuccess != 0:
-        print("Binding attack's success rate is:", str(int(100 * bindSuccess / iterations))[:5], "%")
-        bindArray.append(int(100 * bindSuccess / iterations))
-    else:
-        print("Binding success: 0 %")
-        bindArray.append(0)
-    if concealSuccess != 0:
-        print("Concealing attack's success rate is:", str(int(100 * concealSuccess / iterations))[:5], "%")
-        concealArray.append(int(100 * concealSuccess / iterations))
-    else:
-        print("Concealing success: 0 %")
-        concealArray.append(0)
 
-x = [X for X in range(0, 35, 1)]
-plt.plot(x, bindArray, label="Binding prob")
-plt.plot(x, concealArray, label="Conceal prob")
-plt.ylabel('% of iterations where scheme is cracked')
-plt.xlabel('Nbr of bits used of hash')
-plt.legend(loc='best')
-plt.show()
+def create_k():
+    values_of_k = []
+    for i in range(0, 2 ** 16 - 1):
+        values_of_k.append(i)
+    return values_of_k
+
+# Constructs a dictionary with all possible commit-values for v = 0 and v = 1.
+
+
+def construct_columns(values, X):
+    left_column = []
+    right_column = []
+
+    for k in values:
+        left_column.append(create_commit(0, k))
+        right_column.append(create_commit(1, k))
+
+    dict = {"left": left_column, "right": right_column}
+    return dict
+
+
+# Code from https://www.geeksforgeeks.org/python-intersection-two-lists/
+def intersection(left, right):
+    res = [value for value in left if value in right]
+    return res
+
+
+def find_collisions(X):
+    columns = construct_columns(create_k(), X)
+    left_column = columns.get("left")
+    right_column = columns.get("right")
+    bindings = []
+    conceals = []
+
+    for trunc_value in range(1, X):
+        possible_intersections_left = []
+        possible_intersections_right = []
+        left_set = set()
+        right_set = set()
+        total_commits = 0
+
+        for left in left_column:
+            val = left[2: trunc_value + 2]
+            possible_intersections_left.append(val)
+            left_set.add(val)
+        for right in right_column:
+            val = right[2: trunc_value + 2]
+            possible_intersections_right.append(val)
+            right_set.add(val)
+        res = intersection(
+            possible_intersections_left, right_set)
+        nbr_of_collisions = len(res)
+
+        print("Nbr of collisions for X-value = " +
+              str(trunc_value) + " : " + str(nbr_of_collisions))
+        x_values.append(trunc_value)
+        y_values.append(100 * (nbr_of_collisions) / 2 ** 16)
+
+        possibilities = left_set.union(right_set)
+        possibilites = left_set.symmetric_difference(right_set)
+
+        ratio = len(possibilites) / len(possibilites)
+
+
+
+        print("Probablility of breaking concealing property: " + str(find_conceals()))
+        y_conceal_values.append(100 * find_conceals())
+
+    stats(x_values, y_values, y_conceal_values)
+
+def find_conceals():
+    v = randint(0, 1)
+    k_values = create_k()
+    commits = {0: [], 1: []}
+    for k in k_values:
+        commit = create_commit(randint(0, 1), k)
+
+        for i in range(2**16):
+            commit0 = create_commit(0, i)
+            commit1 = create_commit(1, i)
+
+            if commit == commit0: commits[0].append(commit0)
+            if commit == commit1: commits[1].append(commit1)
+        return len(commits[v]) / (len(commits[0]) + len(commits[1]))
+
+
+def stats(x, y, y2):
+    stats = matplotlib.pyplot
+    stats.plot(x, y, label="Binding property")
+    stats.plot(x, y2, label="Concealing property")
+    stats.xlabel("Hash output length")
+    stats.ylabel("Percent")
+    stats.legend(loc='best')
+    stats.show()
+
+
+find_collisions(40)
