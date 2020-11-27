@@ -17,23 +17,24 @@ def main():
         f1 += sum(shares)
         print(f1)
 
+        master.insert(0,f1)
+        print(master)
         #Create y-array
         #Calculate the Lagrange polynomial
         x = np.array(collab)
-        master.insert(0,f1)
         y = np.array(master)
         poly = interpolate.lagrange(x,y)
         print(poly(0))
 
 def getinfo(lines):
     polynomial = lines[0].split(",")
-    polynomial = map(int, polynomial)
+    polynomial = list(map(int, polynomial))
     shares = lines[1].split(",")
-    shares = map(int, shares)
+    shares = list(map(int, shares))
     master = lines[2].split(",")
-    master = map(int, master)
+    master = list(map(int, master))
     collab = lines[3].split(",")
-    collab = map(int, collab)
+    collab = list(map(int, collab))
     return polynomial, shares, master, collab
 
 if __name__ == '__main__':
