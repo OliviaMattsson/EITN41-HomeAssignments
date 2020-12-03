@@ -3,12 +3,25 @@
 import math
 import hashlib
 
+# Länk till RFC: https://tools.ietf.org/html/rfc8017
 
 def main():
     # Read a file with the content: 
     with open('HA4/testfiles/b1.txt') as f:
         lines = f.read().splitlines()
     
+    # RSAES-OAEP Scheme
+
+    # RSAEP primitive (Section 5.1.1)
+    c = RSAEP(pubKey, m)
+    # RSADP primitive (Section 5.1.2)
+    message = RSADP(privKey, c)
+    # EME-OAEP encoding method (Section 7.1)
+        # EME-OAEP encoding: Step 2 in 7.1.1
+        
+        # EME-OAEP decoding: Step 3 in 7.1.2
+
+
 
 # Mask Genereation Function
 def MGF1(mgfSeed, maskLen):
@@ -42,6 +55,19 @@ def I2OSP(x, xLen):
         X += x * 256**xLen
     # Return the base 256 X value:
     return X
+
+# RSAEP primitive (Section 5.1.1)
+def RSAEP(pubKey, m):
+    n, e = pubKey
+    c = ""
+    return c
+
+# RSADP primitive (Section 5.1.2)
+def RSADP(privKey, c):
+    n, d, quint, c = privKey
+    m = ""
+    return m
+
 
 # Byte array to hash
 def sha_hash(inputVal):
