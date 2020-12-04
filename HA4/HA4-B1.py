@@ -4,6 +4,8 @@ import math
 import hashlib
 
 # Länk till RFC: https://tools.ietf.org/html/rfc8017
+
+# The length of SHA1 digest is 20 bytes:
 hLen = 20
 
 def main():
@@ -20,13 +22,13 @@ def main():
     print("Encrypted message: " + c)
     print("-------------------------")
     # EME-OAEP decoding: Step 3 in 7.1.2
-    decrypted = RSADP(encMessage)
+    decrypted = OAEPdecode(encMessage)
     print("Decrypted message: " + decrypted)
             
     
 
 def OAEPencode(seed, message):
-    lHash = hashlib.sha1(bytearray("".encode())).hexdigest()
+    lHash = sha_hash("")
     mLen = int(len(message)/2)
     k = 128
     PS = (k - mLen - 2*hLen) - 2
@@ -39,9 +41,9 @@ def OAEPencode(seed, message):
     encMessage = "00" + maskedSeed + maskedDB
     return encMessage
 
-def OAEPdecode():
+def OAEPdecode(message):
     # TODO
-    return
+    return ""
 
 
 # Mask Genereation Function
