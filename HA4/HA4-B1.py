@@ -10,12 +10,11 @@ hLen = 20
 k = 128
 
 def main():
-    mgfseed = '9b4bdfb2c796f1c16d0c0772a5848b67457e87891dbc8214'
-    maskLen = 21
-    m = "c107782954829b34dc531c14b40e9ea482578f988b719497aa0687"
-    M = "fd5507e917ecbe833878" 
-    seed = "1e652ec152d0bfcd65190ffc604c0933d0423381"
-    encMessage = "0063b462be5e84d382c86eb6725f70e59cd12c0060f9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabde9b10bfc51efc06d40d25f96bd0f4c5d88f32c7d33dbc20f8a528b77f0c16a7b4dcdd8f"
+    mgfseed = '4ca586d5705a0b82ce5c5ca03dcd90'
+    maskLen = 25
+    m = "0d4413b8823db607b594f3d7e86c4db168a4a17eb4fffd97bb71"
+    seed = "e1683401d63da920ccced24b47c53cca7479f0ec"
+    encMessage = "0043759f100e1b0ffbaed6b5e234f085cfd20cb94962f786195f85f8d337481f2abb06da0f3f9b1a5e413d31e347a179461d13c47b4f6893c02220932443e5764a02e5e0233d76bbdbc5c2e65c3dc014dd42a6532a2b5dcf4327381adfb17506a65397e78b611b2080a5d90a4818eea05072f5cc639ae55f1c7462da3621dcd0"
     # RSAES-OAEP Scheme
     res = MGF1(mgfseed, maskLen)
     print("MGF1: {0}".format(res))
@@ -23,15 +22,16 @@ def main():
 
     # EME-OAEP encoding: Step 2 in 7.1.1
     c = OAEPencode(seed, m)
-    print("Encrypted message: " + c)
+    print("Encrypted message: {0}".format(c))
     print("-------------------------")
     # EME-OAEP decoding: Step 3 in 7.1.2
     decrypted = OAEPdecode(encMessage)
-    print("Decrypted message: " + decrypted)
+    print("Decrypted message: {0}".format(decrypted))
             
     
-
+# EME-OAEP encoding
 def OAEPencode(seed, message):
+    # Computes hash of empty string
     lHash = sha_hash("")
     mLen = int(len(message)/2)
     PS = (k - mLen - 2*hLen) - 2
@@ -46,9 +46,13 @@ def OAEPencode(seed, message):
         encMessage = "00" + encMessage
     return encMessage
 
+
+# EME-OAEP decoding
 def OAEPdecode(message):
+    # Computes hash of empty string
     lHash = sha_hash("")
     Y = message[:2]
+    # Retrieves masked seed & db from encrypted message
     maskedSeed = message[2:hLen*2 + 2]
     maskedDB = message[2*hLen+2:]
     seedMask = MGF1(maskedDB, hLen)
@@ -58,6 +62,8 @@ def OAEPdecode(message):
     lHash2 = db[:2*hLen]
     message = db[2*hLen:]
     indexMess = message.find("01")
+    if lHash != lHash2 or indexMess == -1:
+        return "Decryption error"
     message = message[indexMess+2:]
     return message
 
