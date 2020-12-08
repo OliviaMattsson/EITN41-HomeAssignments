@@ -7,11 +7,13 @@ import hashlib
 
 # The length of SHA1 digest is 20 bytes:
 hLen = 20
+k = 128
 
 def main():
     mgfseed = '9b4bdfb2c796f1c16d0c0772a5848b67457e87891dbc8214'
     maskLen = 21
     m = "c107782954829b34dc531c14b40e9ea482578f988b719497aa0687"
+    M = "fd5507e917ecbe833878" 
     seed = "1e652ec152d0bfcd65190ffc604c0933d0423381"
     encMessage = "0063b462be5e84d382c86eb6725f70e59cd12c0060f9d3778a18b7aa067f90b2178406fa1e1bf77f03f86629dd5607d11b9961707736c2d16e7c668b367890bc6ef1745396404ba7832b1cdfb0388ef601947fc0aff1fd2dcd279dabde9b10bfc51efc06d40d25f96bd0f4c5d88f32c7d33dbc20f8a528b77f0c16a7b4dcdd8f"
     # RSAES-OAEP Scheme
@@ -32,7 +34,6 @@ def main():
 def OAEPencode(seed, message):
     lHash = sha_hash("")
     mLen = int(len(message)/2)
-    k = 128
     PS = (k - mLen - 2*hLen) - 2
     padding = "".zfill((PS*2))
     DB = lHash + padding + "01" + message
@@ -41,11 +42,24 @@ def OAEPencode(seed, message):
     seedMask = MGF1(maskedDB, hLen).lstrip("0x")
     maskedSeed = hex(int(seed,16) ^ int(seedMask, 16))[2:]
     encMessage = "00" + maskedSeed + maskedDB
+    if ((len(encMessage)/2) < 128):
+        encMessage = "00" + encMessage
     return encMessage
 
 def OAEPdecode(message):
-    # TODO
-    return ""
+    lHash = sha_hash("")
+    Y = message[:2]
+    maskedSeed = message[2:hLen*2 + 2]
+    maskedDB = message[2*hLen+2:]
+    seedMask = MGF1(maskedDB, hLen)
+    seed = hex(int(maskedSeed,16) ^(int(seedMask,16)))[2:]
+    dbMask = MGF1(seed, (k-hLen-1))
+    db =  hex(int(maskedDB,16) ^(int(dbMask,16)))[2:]
+    lHash2 = db[:2*hLen]
+    message = db[2*hLen:]
+    indexMess = message.find("01")
+    message = message[indexMess+2:]
+    return message
 
 
 # Mask Genereation Function
