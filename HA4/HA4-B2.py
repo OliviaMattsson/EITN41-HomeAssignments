@@ -1,9 +1,7 @@
 # OTR
 # By Amanda Flote & Olivia Mattsson
 
-import hashlib
-import socket
-import random
+import hashlib, socket, random, math
 
 sharedSecret = "eitn41 <3"
 
@@ -25,7 +23,6 @@ def main():
     # the p shall be the one given in the manual
     p = lines[0].replace(' ', '')
     p = int(p,16)
-    print(p)
     g = 2
    
     def agreement():
@@ -35,7 +32,7 @@ def main():
     # interpret as a number
         g_x1 = int(g_x1, 16)
     # generate g**x2, x2 shall be a random number
-        x2 = random.randint(0,10)
+        x2 = random.randint(10,50)
     # calculate g**x2 mod p
         g_x2 = pow(g, x2, p)
     # convert to hex-string
@@ -63,7 +60,14 @@ def main():
     print ('\nsent Q:', soc.recv(4096).decode('utf8').strip())
 
     #Create Rb - här får vi too big int
-    Rb = pow(int(Qa,16) * pow(int(Q,16), -1), BobExp3, p)
+    
+    print(len(str(int(Qa,16))))
+    print(len(str(int(Q,16))))
+    Qa_256 = I20SP(int(Qa, 16), math.ceil(math.log(int(Qa,16), 256))+10)
+    Q_256 = I20SP(int(Q, 16), math.ceil(math.log(int(Qa,16), 256))+10)
+    print("Qa: {0}".format(Qa_256))
+    print("Q: {0}".format(Q_256))
+    Rb = pow(int(Qa_256,16) * pow(int(Q_256,16), -1), BobExp3, p)
     Rb = format(Rb, 'x')
     Ra  = soc.recv(4096).decode('utf8').strip()
     soc.send(Rb.encode('utf8'))
@@ -81,7 +85,7 @@ def main():
 
 
 def calculatePQ(gen1, gen2, gen3, sharedKey, p):
-    b = random.randint(0,10)
+    b = random.randint(10,50)
     y = sha_hash(sharedKey.to_bytes((sharedKey.bit_length() + 7) // 8, 'big')+ sharedSecret.encode('utf8'))
     print("y :" + y) 
 
@@ -91,6 +95,26 @@ def calculatePQ(gen1, gen2, gen3, sharedKey, p):
    # print("Q: " + str(Q))
     return format(P, 'x'),format(Q, 'x')
 
+
+# I20SP function
+def I20SP (x, xLen):
+    # If x >= 256^xLen, output "integer too large" and stop.
+    if x >= 256**xLen:
+        print("Integer too large")
+        return
+    # Make a representation of X in base 256: 
+    X = ""
+    for i in range(1,xLen+1):
+        if i == xLen:
+            res = x
+        elif (x / (256**(xLen-i))) > 1:
+            res = int(x - math.floor(x / (256**(xLen-i))))
+            x = x - res        
+        else:
+            res = "0"
+        X += str(res)
+    # Return the base 256 X value:
+    return (X.zfill(2*xLen))
 
 # Byte array to hash
 def sha_hash(inputVal):

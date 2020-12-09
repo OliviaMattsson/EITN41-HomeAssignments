@@ -1,7 +1,6 @@
 # OAEP for RSA
 # By Amanda Flote & Olivia Mattsson
-import math
-import hashlib
+import math, hashlib
 
 # Länk till RFC: https://tools.ietf.org/html/rfc8017
 
