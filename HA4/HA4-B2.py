@@ -61,13 +61,12 @@ def main():
 
     #Create Rb - här får vi too big int
     
-    print(len(str(int(Qa,16))))
-    print(len(str(int(Q,16))))
-    Qa_256 = I20SP(int(Qa, 16), math.ceil(math.log(int(Qa,16), 256))+10)
-    Q_256 = I20SP(int(Q, 16), math.ceil(math.log(int(Qa,16), 256))+10)
+    Qa_256 = I20SP(int(Qa, 16), int(math.log(int(Qa,16), 256)+1))
     print("Qa: {0}".format(Qa_256))
+    Q_256 = I20SP(int(Q, 16), int(math.log(int(Q,16), 256)+1))
+    Q_inv = inverse(Q_256)
     print("Q: {0}".format(Q_256))
-    Rb = pow(int(Qa_256,16) * pow(int(Q_256,16), -1), BobExp3, p)
+    Rb = pow(int(Qa_256,16) * pow(int(Q_256,16), -1), BobExp3, p) # TODO
     Rb = format(Rb, 'x')
     Ra  = soc.recv(4096).decode('utf8').strip()
     soc.send(Rb.encode('utf8'))
@@ -82,6 +81,9 @@ def main():
     receivedMessage = hex(int(receivedMessage,16) ^ int(str(sharedKey), 16)).decode('utf8')
     print ('\nsent message:', receivedMessage)
 
+def inverse(value):
+    # TODO
+    return value
 
 
 def calculatePQ(gen1, gen2, gen3, sharedKey, p):
@@ -98,23 +100,20 @@ def calculatePQ(gen1, gen2, gen3, sharedKey, p):
 
 # I20SP function
 def I20SP (x, xLen):
+    xLen = math.ceil(xLen)
     # If x >= 256^xLen, output "integer too large" and stop.
     if x >= 256**xLen:
         print("Integer too large")
         return
-    # Make a representation of X in base 256: 
-    X = ""
-    for i in range(1,xLen+1):
-        if i == xLen:
-            res = x
-        elif (x / (256**(xLen-i))) > 1:
-            res = int(x - math.floor(x / (256**(xLen-i))))
-            x = x - res        
-        else:
-            res = "0"
-        X += str(res)
+    # Make a representation of X in base 256:
+    X = bytearray(xLen)
+    for i in range(0,xLen-1):
+        # For each value on i, we want to find out what we need to multiply 256^(xLen-i) with to get the part
+        X[i] = x // (256**(xLen-1-i))
+        x = x % (256**(xLen-1-i))
+    X[xLen - 1] = x
     # Return the base 256 X value:
-    return (X.zfill(2*xLen))
+    return X
 
 # Byte array to hash
 def sha_hash(inputVal):
