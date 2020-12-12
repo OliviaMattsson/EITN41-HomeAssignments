@@ -63,7 +63,7 @@ def main():
     print ('\nauthentication:', soc.recv(4096).decode('utf8').strip())
     
     #Send message:
-    message = "0123456789abcdef"
+    message = "e21def8129b64b0899ea941d4597ca9f27d98228"
     padding = bytes(len(sharedKey) - len(message) // 2)
     message = padding + binascii.unhexlify(message)
     encryptedMessage = xor(message, sharedKey)
