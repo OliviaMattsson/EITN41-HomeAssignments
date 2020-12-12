@@ -47,9 +47,9 @@ def otr_smp(passphrase, p, g, g1, msg):
     g_x2 = pow(g, x2, p)
     send(g_x2)
     print ('\nsent g_x2:', recv())
-
+    print(pow(g_x1, x2, p))
     DH_key = I2OSP(pow(g_x1, x2, p))
-
+    print("DH key: {0}".format(DH_key))
     ##########################
     ########## SMP ###########
     ##########################
@@ -84,7 +84,7 @@ def otr_smp(passphrase, p, g, g1, msg):
     g2 = pow(g2_a, b2, p)
 
     y = int(sha1(DH_key + passphrase).hexdigest(), 16)
-
+    print("y: {0}".format(y))
     Q_b = pow(g1, b, p) * pow(g2, y, p)
     send(Q_b)
     print ('\nsent Q_b:', recv())
