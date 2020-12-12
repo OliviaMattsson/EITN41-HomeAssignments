@@ -92,7 +92,6 @@ def calculatePQ(gen1, gen2, gen3, sharedKey, p):
     Q= pow(gen1, b, p) * pow(gen2, int(y,16), p)
     return P,Q
 
-
 # I20SP function
 def I20SP (x, xLen):
     xLen = math.ceil(xLen)
@@ -109,6 +108,7 @@ def I20SP (x, xLen):
     X[xLen - 1] = x
     # Return the base 256 X value:
     return X
+
 
 def inverse(val):
     # We need to find x so that x*val % p is equivalent to 1, using the
@@ -133,6 +133,8 @@ def euc_alg(val, p):
     if t < 0:
         t = t + p
     return  val, t
+
+   
 
 
 # Byte array to hash
