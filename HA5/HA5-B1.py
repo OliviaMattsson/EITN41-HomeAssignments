@@ -2,17 +2,23 @@
 # RSA secret key 
 # By Olivia Mattsson and Amanda Flote
 from Crypto.PublicKey import RSA
-from OpenSSL import crypto
+from Crypto.Cipher import PKCS1_v1_5
+from Crypto.Hash import SHA
+from Crypto import Random
+# from OpenSSL import crypto
 import pyasn1.codec.der.decoder
 import pyasn1.codec.der.encoder
 from pyasn1_modules import rfc8017
 import base64
 
-# https://www.pyopenssl.org/en/stable/api/crypto.html#pkey-objects
-
 
 def decrypt(m, privKey):
-    return
+    # From Cryptodome documentations: https://pycryptodome.readthedocs.io/en/latest/src/cipher/pkcs1_v1_5.html
+    dsize = SHA.digest_size
+    sentinel = Random.new().read(15+dsize)
+    cipher = PKCS1_v1_5.new(privKey)
+    decrypted_message = cipher.decrypt(m, sentinel)
+    return decrypted_message
 
 
 # RSA private key syntax: https://tools.ietf.org/html/rfc3447#appendix-A.1.2
@@ -39,6 +45,7 @@ def reconstructKey():
 
 if __name__ == '__main__':
     k = reconstructKey()
-    encrypted_message = 'Qe7+h9OPQ7PN9CmF0ZOmD32fwpJotrUL67zxdRvhBn2U3fDtoz4iUGRXNOxwUXdJ2Cmz7zjS0DE8ST5dozBysByz/u1H//iAN+QeGlFVaS1Ee5a/TZilrTCbGPWxfNY4vRXHP6CB82QxhMjQ7/x90/+JLrhdAO99lvmdNetGZjY='
+    encrypted_message = 'T9FAfFVcVCdPH45kv3OU/Kot9NOyQ2t5tWI1GW6nJ4Ul435T68wq1f1vm3KhDcKONzdN3krJ/VwlIzdssIcqmVizw5mnMupmd1gNmf7EKLZWjT4LaMQhDMijrfhxCdbiQKjKqYnUehlOCeDS0JXOJpiYcCtbmTVYHBmxBuOZ1l8='
+    encrypted_message = base64.b64decode(encrypted_message)
     m = decrypt(encrypted_message, k)
     print(m)
