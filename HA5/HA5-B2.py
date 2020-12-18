@@ -6,14 +6,16 @@ import hashlib
 identity = 'craig@crypto.sec'
 p = '9240633d434a8b71a013b5b00513323f'
 q = 'f870cfcd47e6d5a0598fc1eb7e999d1b'
-# Output 220 mail: walter@crypto.sec
-#encryptedBits = ['0b62a946b76845e44591e79a9fe1f8a2d44095fad9d3543a570f65a2168b5051','2bdd5d58fe150fc75ad2f6f0858f0df3128597b1e06bdde3cbeb7605f5b39dcd','7911234bca14066caf7831449a8dbdef32c7b24c53e948765c0e803da77353a3','7e9c90937d6eb21f93fd4cf37d3ee126e6eb5e600d05ae3a58816db60c3fb74b','5d4e9a468e76b863d3969d7f844752545eac0baabebdf10b42e9e679b5ce15a5','52f9c7c50a00cee060ce12012b7fadb094ea0d920ff4d3f0fc2c8a92afea8020','5d1717c2eebadd66a3192ce361e1ede546d96db9d287c722528d3f4932d8c640','19a3ebbdf8b31209200c24b76cc3735d7f12cdc1b544b80bc995f3bcb1836eda']
 
-#Test output 42 mail: walterwhite@crypto.sec
-#encryptedBits =['2f2aa07cfb07c64be95586cfc394ebf26c2f383f90ce1d494dde9b2a3728ae9b','63ed324439c0f6b823d4828982a1bbe5c34e66d985f55792028acd2e207daa4f','85bb7964196bf6cce070a5e8f30bc822018a7ad70690b97814374c54fddf8e4b','30fbcc37643cc433d42581f784e3a0648c91c9f46b5671b71f8cc65d2737da5c','5a732f73fb288d2c90f537a831c18250af720071b6a7fac88a5de32b0df67c53','504d6be8542e546dfbd78a7ac470fab7f35ea98f2aff42c890f6146ae4fe11d6','10956aff2a90c54001e85be12cb2fa07c0029c608a51c4c804300b70a47c33bf','461aa66ef153649d69b9e2c699418a7f8f75af3f3172dbc175311d57aeb0fd12']
+encryptedBits = ['78c4125df8a0a0201ad8443349a50dfe8da7781865190f0d6c42c414c9b5178a',
+'3bb1377035c5fff518b1b7c9fe2c4a072f33059b549e85390e80f55a75a215c6',
+'8dc799a9b1eedb344ec7b5f1ad85b5b655cb0edbc4f903b242f45e5540eb62ed',
+'86d096b16e9c4ddd3b9dbe8a0e8405676d0fe03a4bca55e1cfb590654d3bed11',
+'1c43ea858ad3b379a7935118df21abbf6484d95c2782ce8f542033bf5e0aa75f',
+'612be2f70240c427799fcba3b70b6fc01dea8385ec86347bdbe1e857f6f74af7',
+'4796d276924394d29907798cfe9668da086126cbcd5d63ccb1c54e117a4ec85e',
+'5205e0c007fff45f6c1f614bf3346b11b98b428f21aa854ba368e49f7dfc63d2']
 
-#Riktigt quiz mail: craig@crypto.sec kolla med fred om vi får samma output
-encryptedBits =['7a467d8e4c1895947664b67b5a2cc1b8fba212b29e2f55c6dc201f6a47112763','75ab77f877d66cc5fe64d3ebf76d5c633b9c6a5ed904824a6a3ed897225116cb','753b0a35978ba3638e9ef9965779316234748db6323c86ecd95e89b420bc3c56','09c5c347811bdc8d893128b0a6a0e14815e5b0aa320c34dd8364f8d1cf8e7d09','5a3674a974783eb795bcae3b5589d1fe20adf164fbeec5818632991792b1999d','5834692bc1de2f9f350fa4712043ff0c9b3dfdc36de5dbd7b2a0afb41df90832','4e384060c535327d1359734f2e5a69a7c315547832b9104b4dc69c2fb805c4e5','5702fcacce8d1db61304ce4eda30ff9045c12c7965fe4ee6209883ce98a84acb']
 def main():
     M= int(p,16)*int(q,16)
     hashedEmail = sha_hash(identity.encode('utf8'), M)
@@ -21,19 +23,15 @@ def main():
     foundHash = True
     if(j== 1):
         foundHash = False
-    #hashedEmail = sha_hash(hashedEmail,M)
     while(foundHash):
-        print("I while")
         hashedEmail = sha_hash(hashedEmail,M)
         j = jacobi(int.from_bytes(hashedEmail,byteorder='big'),M) 
         if(j == 1):
-            print("här")
             foundHash = False
             
     r= calculateRoot(int.from_bytes(hashedEmail,byteorder= 'big'), M)
     message = decrypt(r, encryptedBits, M)
   
-    print(message)
     return int(message,2), hex(r).lstrip('0x')
 
 # Using Cocks encryption scheme - PKG
