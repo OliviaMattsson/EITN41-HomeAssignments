@@ -19,13 +19,11 @@ def main():
     hashedEmail = sha_hash(identity.encode('utf8'), M)
     j = jacobi(int.from_bytes(hashedEmail,byteorder='big'),M)
     foundHash = True
-    attempt = 0
     if(j== 1):
         foundHash = False
     #hashedEmail = sha_hash(hashedEmail,M)
     while(foundHash):
         print("I while")
-        attempt += 1
         hashedEmail = sha_hash(hashedEmail,M)
         j = jacobi(int.from_bytes(hashedEmail,byteorder='big'),M) 
         if(j == 1):
